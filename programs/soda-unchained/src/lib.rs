@@ -28,15 +28,15 @@ pub mod soda_unchained {
         Ok(())
     }
 
-    // /// Initialize the server
-    // pub fn initialize_server(ctx: Context<ServerInit>) -> Result<()> {
-    //     instructions::initialize::initialize_server(ctx, 1)
-    // }
+    /// Initialize the server
+    pub fn initialize_server(ctx: Context<ServerInit>) -> Result<()> {
+        instructions::initialize::initialize_server(ctx, 1)
+    }
 
-    // /// membership token
-    // pub fn membership_token(ctx: Context<MembershipMint>, param: u8) -> Result<()> {
-    //     instructions::manage_membership(ctx, param)
-    // }
+    /// membership token
+    pub fn membership_token(ctx: Context<MembershipMint>, param: u8) -> Result<()> {
+        instructions::manage_membership(ctx, param)
+    }
 }
 
 #[derive(Accounts)]

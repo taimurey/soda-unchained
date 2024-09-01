@@ -1,5 +1,5 @@
-// pub mod initialize;
-// pub mod membership;
+pub mod initialize;
+pub mod membership;
 
-// pub use initialize::*;
-// pub use membership::*;
+pub use initialize::*;
+pub use membership::*;
