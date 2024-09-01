@@ -1,0 +1,27 @@
+[package]
+name = "soda-unchained"
+version = "0.1.0"
+description = "Created with Anchor"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "soda_unchained"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+devnet = []
+custom-heap = []
+default = ["custom-heap"]
+
+[dependencies]
+light-compressed-token = { version = "0.7.0", features = ["cpi"] }
+anchor-lang = { version = "0.29.0", features = ["init-if-needed"] }
+anchor-spl = "0.29.0"
+
+
+[dev-dependencies]
+proptest = "1.0.0"
