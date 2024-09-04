@@ -60,6 +60,9 @@ pub struct ServerInitialize<'info> {
     pub account_compression_program: Program<'info, Token>,
 }
 
+/// Creates a merkle tree for each server and mints a token to server creator
+/// Address of Creator is inserted into merkle tree
+///
 pub fn initialize_server(
     ctx: Context<ServerInitialize>,
     merkle_tree_config: AddressMerkleTreeConfig,
@@ -92,7 +95,7 @@ pub fn initialize_server(
         queue_config,
     )?;
 
-    // TODO: Emit
+    // TODO: Emit Merkle Tree Configs
 
     let space = Mint::LEN;
     let lamports = Rent::get()?.minimum_balance(space);
