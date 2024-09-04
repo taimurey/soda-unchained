@@ -16,6 +16,7 @@ pub struct MembershipMint<'info> {
     #[account(mut)]
     pub mint: Account<'info, Mint>,
 
+    /// mint
     #[account(
         init,
         seeds = [
@@ -65,6 +66,8 @@ pub struct MembershipMint<'info> {
 }
 
 impl<'info> MembershipMint<'info> {
+    pub const LEN: usize = 15 * 32 + 15 * 32;
+
     pub fn set_mint_ctx(&self) -> CpiContext<'_, '_, '_, 'info, MintToInstruction<'info>> {
         let cpi_accounts = MintToInstruction {
             fee_payer: self.payer.to_account_info(),

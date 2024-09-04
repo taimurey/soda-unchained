@@ -1,15 +1,15 @@
-use anchor_lang::{
-    prelude::*,
-    solana_program::{self, instruction::Instruction},
-    system_program,
+use account_compression::{
+    utils::constants::CPI_AUTHORITY_PDA_SEED, AddressMerkleTreeConfig, AddressQueueConfig,
 };
+use anchor_lang::{prelude::*, system_program};
 use anchor_spl::{
     token::{Mint, Token, TokenAccount},
     token_2022::{initialize_account3, InitializeAccount3},
 };
+use light_compressed_token::program::LightCompressedToken;
 
 #[derive(Accounts)]
-pub struct ServerInit<'info> {
+pub struct ServerInitialize<'info> {
     /// creator account
     #[account(mut)]
     pub creator: Signer<'info>,
@@ -40,9 +40,14 @@ pub struct ServerInit<'info> {
     /// Token-Program or Token-Program
     pub token_program: Program<'info, Token>,
 
+    /// CHECK:
+    #[account(mut)]
+    pub queue: AccountInfo<'info>,
+
     /// Light-Compressed-Token
     pub light_system_program: Program<'info, Token>,
-    pub compressed_token_program: Program<'info, Token>,
+
+    pub compressed_token_program: Program<'info, LightCompressedToken>,
 
     /// CHECK:
     pub account_compression_authority: UncheckedAccount<'info>,
@@ -55,7 +60,40 @@ pub struct ServerInit<'info> {
     pub account_compression_program: Program<'info, Token>,
 }
 
-pub fn initialize_server(ctx: Context<ServerInit>, amount: u64) -> Result<()> {
+pub fn initialize_server(
+    ctx: Context<ServerInitialize>,
+    merkle_tree_config: AddressMerkleTreeConfig,
+    queue_config: AddressQueueConfig,
+    bump: u8,
+    index: u64,
+    amount: u64,
+) -> Result<()> {
+    let bump = &[bump];
+    let seeds = [CPI_AUTHORITY_PDA_SEED, bump];
+    let signer_seeds = &[&seeds[..]];
+    let accounts = account_compression::cpi::accounts::InitializeAddressMerkleTreeAndQueue {
+        authority: ctx.accounts.cpi_authority_pda.to_account_info(),
+        merkle_tree: ctx.accounts.merkle_tree.to_account_info(),
+        queue: ctx.accounts.queue.to_account_info(),
+        registered_program_pda: Some(ctx.accounts.registered_program.clone()),
+    };
+    let cpi_ctx = CpiContext::new_with_signer(
+        ctx.accounts.account_compression_program.to_account_info(),
+        accounts,
+        signer_seeds,
+    );
+
+    account_compression::cpi::initialize_address_merkle_tree_and_queue(
+        cpi_ctx,
+        index,
+        Some(ctx.accounts.soda_authority.key()),
+        None,
+        merkle_tree_config,
+        queue_config,
+    )?;
+
+    // TODO: Emit
+
     let space = Mint::LEN;
     let lamports = Rent::get()?.minimum_balance(space);
 
@@ -83,29 +121,7 @@ pub fn initialize_server(ctx: Context<ServerInit>, amount: u64) -> Result<()> {
 
     initialize_account3(cpi_context)?;
 
-    let cpi_accounts = vec![
-        ctx.accounts.creator.to_account_info(),
-        ctx.accounts.mint.to_account_info(),
-        ctx.accounts.system_program.to_account_info(),
-        ctx.accounts.token_program.to_account_info(),
-        ctx.accounts.token_pool_pda.to_account_info(),
-        ctx.accounts.cpi_authority_pda.to_account_info(),
-    ];
-
-    let instruction = Instruction {
-        program_id: ctx.accounts.compressed_token_program.key(),
-        accounts: vec![
-            AccountMeta::new(ctx.accounts.creator.key(), true),
-            AccountMeta::new(ctx.accounts.mint.key(), false),
-            AccountMeta::new(ctx.accounts.system_program.key(), false),
-            AccountMeta::new(ctx.accounts.token_program.key(), false),
-            AccountMeta::new(ctx.accounts.token_pool_pda.key(), false),
-            AccountMeta::new(ctx.accounts.cpi_authority_pda.key(), false),
-        ],
-        data: vec![],
-    };
-
-    solana_program::program::invoke(&instruction, &cpi_accounts)?;
+    light_compressed_token::cpi::create_token_pool(ctx.accounts.set_token_pool_ctx())?;
 
     light_compressed_token::cpi::mint_to(
         ctx.accounts.set_mint_ctx(),
@@ -113,6 +129,8 @@ pub fn initialize_server(ctx: Context<ServerInit>, amount: u64) -> Result<()> {
         vec![amount],
         None,
     )?;
+
+    // TODO : insert_addresses {server creator address}
 
     Ok(())
 }
