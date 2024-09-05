@@ -1,4 +1,4 @@
-use account_compression::cpi::accounts::InsertIntoQueues;
+use account_compression::{cpi::accounts::InsertIntoQueues, StateMerkleTreeAccount};
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 use light_compressed_token::cpi::accounts::{BurnInstruction, MintToInstruction};
@@ -19,16 +19,7 @@ pub struct MembershipMint<'info> {
 
     /// mint
     // TODO : Implement init in the function
-    #[account(
-        init,
-        seeds = [
-        POOL_SEED, &mint.key().to_bytes(),
-        ],
-        bump,
-        payer = payer,
-          token::mint = mint,
-          token::authority = cpi_authority_pda,
-    )]
+    #[account(mut)]
     pub token_pool_pda: Account<'info, TokenAccount>,
 
     /// CHECK: Soda Authority
@@ -144,6 +135,9 @@ pub fn manage_membership(ctx: Context<MembershipMint>, param: u8) -> Result<()> 
                 vec![1],
                 None,
             )?;
+
+            // TODO: merkle_tree size check
+            // TODO: if true: rollover queue
             account_compression::cpi::insert_addresses(
                 ctx.accounts.set_insert_addresses_ctx(),
                 vec![ctx.accounts.payer.key().to_bytes()],

@@ -2,6 +2,7 @@ pub mod error;
 pub mod instructions;
 pub mod utils;
 
+use account_compression::{AddressMerkleTreeConfig, AddressQueueConfig};
 use anchor_lang::prelude::*;
 use instructions::*;
 
@@ -23,13 +24,27 @@ pub mod admin {
 pub mod soda_unchained {
     use super::*;
 
-    // /// Initialize the server
-    // pub fn initialize_server(ctx: Context<ServerInit>) -> Result<()> {
-    //     instructions::initialize::initialize_server(ctx, 1)
-    // }
+    /// Initialize the server
+    pub fn initialize_server(
+        ctx: Context<ServerInitialize>,
+        merkle_tree_config: AddressMerkleTreeConfig,
+        queue_config: AddressQueueConfig,
+        bump: u8,
+        index: u64,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::initialize::initialize_server(
+            ctx,
+            merkle_tree_config,
+            queue_config,
+            bump,
+            index,
+            amount,
+        )
+    }
 
-    // /// membership token
-    // pub fn membership_token(ctx: Context<MembershipMint>, param: u8) -> Result<()> {
-    //     instructions::manage_membership(ctx, param)
-    // }
+    /// membership token
+    pub fn membership_token(ctx: Context<MembershipMint>, param: u8) -> Result<()> {
+        instructions::manage_membership(ctx, param)
+    }
 }
