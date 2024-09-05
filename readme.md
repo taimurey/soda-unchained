@@ -2,15 +2,6 @@
 
 This guide will walk you through the process of setting up your environment to run Anchor programs on Solana, as well as building and deploying your program.
 
-## Prerequisites
-
-- A Unix-like operating system (Linux, macOS, WSL for Windows)
-- `curl` installed on your system
-
-## Important Note on Network and Features
-
-As of the current date, compressed tokens and the Light Protocol are not available on the Solana mainnet. Therefore, we will be using the devnet for development and testing. Additionally, we recommend using Helius RPC for improved performance and reliability.
-
 ## Installation Steps
 
 ### 1. Install Solana
@@ -82,23 +73,8 @@ Replace `<your-api-key>` with your actual Helius API key.
 
 ### 3. Deploy the program
 
-To deploy your program to the Solana devnet, use:
+To deploy thr program to the Solana devnet, use:
 
 ```bash
 anchor deploy --provider.cluster devnet
 ```
-
-This command deploys your built program to the Solana devnet cluster using the Helius RPC.
-
-## Next Steps
-
-After successful deployment, you can:
-
-1. Interact with your program using Anchor's TypeScript client
-2. Write and run tests for your program
-3. Monitor your program's performance on devnet
-4. Explore the features of compressed tokens and Light Protocol on devnet
-
-Remember that while testing on devnet with these features is possible, you'll need to plan for alternative approaches or await mainnet support for a production deployment.
-
-For more detailed information, refer to the official [Anchor documentation](https://www.anchor-lang.com/) and stay updated with the latest developments in the Solana ecosystem.
