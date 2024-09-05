@@ -61,8 +61,7 @@ pub struct ServerInitialize<'info> {
 }
 
 /// Creates a merkle tree for each server and mints a token to server creator
-/// Address of Creator is inserted into merkle tree
-///
+/// Creator Address is inserted into merkle tree
 pub fn initialize_server(
     ctx: Context<ServerInitialize>,
     merkle_tree_config: AddressMerkleTreeConfig,
@@ -133,7 +132,12 @@ pub fn initialize_server(
         None,
     )?;
 
-    // TODO : insert_addresses {server creator address}
+    // TODO : add dynamic support for addresses
+
+    account_compression::cpi::insert_addresses(
+        ctx.accounts.set_insert_addresses_ctx(),
+        vec![ctx.accounts.creator.key().to_bytes()],
+    )?;
 
     Ok(())
 }

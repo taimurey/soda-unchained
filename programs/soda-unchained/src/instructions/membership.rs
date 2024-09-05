@@ -1,3 +1,4 @@
+use account_compression::cpi::accounts::InsertIntoQueues;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 use light_compressed_token::cpi::accounts::{BurnInstruction, MintToInstruction};
@@ -17,6 +18,7 @@ pub struct MembershipMint<'info> {
     pub mint: Account<'info, Mint>,
 
     /// mint
+    // TODO : Implement init in the function
     #[account(
         init,
         seeds = [
@@ -115,17 +117,40 @@ impl<'info> MembershipMint<'info> {
             cpi_accounts,
         )
     }
+
+    pub fn set_insert_addresses_ctx(
+        &self,
+    ) -> CpiContext<'_, '_, '_, 'info, InsertIntoQueues<'info>> {
+        let cpi_accounts = InsertIntoQueues {
+            fee_payer: self.payer.to_account_info(),
+            authority: self.soda_authority.to_account_info(),
+            registered_program_pda: Some(self.registered_program.to_account_info()),
+            system_program: self.system_program.to_account_info(),
+        };
+
+        CpiContext::new(
+            self.account_compression_program.to_account_info(),
+            cpi_accounts,
+        )
+    }
 }
 
 pub fn manage_membership(ctx: Context<MembershipMint>, param: u8) -> Result<()> {
     match param {
-        0 => light_compressed_token::cpi::mint_to(
-            ctx.accounts.set_mint_ctx(),
-            vec![ctx.accounts.payer.key()],
-            vec![1],
-            None,
-        ),
-        // 1 => light_compressed_token::cpi::burn(ctx.accounts.set_burn_ctx(), inputs),
+        0 => {
+            light_compressed_token::cpi::mint_to(
+                ctx.accounts.set_mint_ctx(),
+                vec![ctx.accounts.payer.key()],
+                vec![1],
+                None,
+            )?;
+            account_compression::cpi::insert_addresses(
+                ctx.accounts.set_insert_addresses_ctx(),
+                vec![ctx.accounts.payer.key().to_bytes()],
+            )
+        }
+        // TODO : Build inputs to burn compressed mint token minted to the user
+        // 1 => light_compressed_token::cpi::burn(ctx.accounts.set_burn_ctx(), inputs)
         _ => Err(ErrorCode::InvalidParam.into()),
     }
 }

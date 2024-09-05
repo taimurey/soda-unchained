@@ -1,3 +1,4 @@
+use account_compression::cpi::accounts::InsertIntoQueues;
 use anchor_lang::prelude::*;
 use light_compressed_token::{
     cpi::accounts::CreateTokenPoolInstruction, cpi::accounts::MintToInstruction,
@@ -47,6 +48,22 @@ impl<'info> ServerInitialize<'info> {
 
         CpiContext::new(
             self.compressed_token_program.to_account_info(),
+            cpi_accounts,
+        )
+    }
+
+    pub fn set_insert_addresses_ctx(
+        &self,
+    ) -> CpiContext<'_, '_, '_, 'info, InsertIntoQueues<'info>> {
+        let cpi_accounts = InsertIntoQueues {
+            fee_payer: self.creator.to_account_info(),
+            authority: self.soda_authority.to_account_info(),
+            registered_program_pda: Some(self.registered_program.to_account_info()),
+            system_program: self.system_program.to_account_info(),
+        };
+
+        CpiContext::new(
+            self.account_compression_program.to_account_info(),
             cpi_accounts,
         )
     }
