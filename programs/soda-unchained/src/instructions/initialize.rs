@@ -54,7 +54,7 @@ pub struct ServerInitialize<'info> {
 
     /// CHECK: (different program) will be checked by the system program
     #[account(mut)]
-    pub merkle_tree: UncheckedAccount<'info>,
+    pub merkle_tree: AccountInfo<'info>,
 
     /// account compression program
     pub account_compression_program: Program<'info, Token>,
