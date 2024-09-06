@@ -1,4 +1,4 @@
-use account_compression::{cpi::accounts::InsertIntoQueues, StateMerkleTreeAccount};
+use account_compression::cpi::accounts::InsertIntoQueues;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 use light_compressed_token::cpi::accounts::{BurnInstruction, MintToInstruction};

@@ -1,7 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SodaUnchained } from "../target/types/soda_unchained";
-import { createRpc, defaultStaticAccountsStruct, defaultTestStateTreeAccounts, LightSystemProgram, Rpc } from "@lightprotocol/stateless.js";
+import { createCompressedAccountWithMerkleContext, createRpc, DEFAULT_MERKLE_TREE_HEIGHT, defaultStaticAccountsStruct, defaultTestStateTreeAccounts, LightSystemProgram, MerkleTree, Rpc } from "@lightprotocol/stateless.js";
 import { Keypair, PublicKey, SystemProgram } from "@solana/web3.js";
 import { CompressedTokenProgram, POOL_SEED } from "@lightprotocol/compressed-token";
 import { TOKEN_PROGRAM_ID } from "@coral-xyz/anchor/dist/cjs/utils/token";
@@ -29,7 +29,8 @@ describe("soda-unchained", () => {
     const tokenPoolPda = gettokenPoolPda(mint.publicKey, program.programId);
     const authorityPda = getAuthorityPda(mint.publicKey, program.programId);
     // Add your test here.
-    const tx = program.methods.initializeServer().accounts({
+    const tx = program.methods.initializeServer(
+    ).accounts({
       creator: owner.publicKey,
       tokenPoolPda: tokenPoolPda[0],
       mint: mint.publicKey,
@@ -39,6 +40,7 @@ describe("soda-unchained", () => {
       noopProgram: systemKeys.noopProgram,
       systemProgram: SystemProgram.programId,
       tokenProgram: TOKEN_PROGRAM_ID,
+      queue: Keypair.generate().publicKey,
       lightSystemProgram: LightSystemProgram.programId,
       compressedTokenProgram: CompressedTokenProgram.programId,
       accountCompressionAuthority: systemKeys.accountCompressionAuthority,

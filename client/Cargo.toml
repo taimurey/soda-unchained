@@ -1,22 +1,7 @@
 [package]
-name = "soda-unchained"
+name = "client"
 version = "0.1.0"
-description = "Created with Anchor"
 edition = "2021"
-
-[lib]
-crate-type = ["cdylib", "lib"]
-name = "soda_unchained"
-
-[features]
-no-entrypoint = []
-no-idl = []
-no-log-ix-name = []
-cpi = ["no-entrypoint"]
-devnet = []
-custom-heap = []
-default = ["custom-heap"]
-test-sbf = []
 
 [dependencies]
 anchor-lang = "0.29.0"
@@ -26,16 +11,14 @@ light-compressed-token = { version = "0.7.0", features = [
     "no-entrypoint",
 ] }
 account-compression = { version = "0.7.0", features = ["cpi", "no-entrypoint"] }
-
-
-[target.'cfg(not(target_os = "solana"))'.dependencies]
 solana-sdk = "1.18.18"
-
-[dev-dependencies]
-solana-program-test = "1.18.18"
-proptest = "1.0.0"
 tokio = "1.40.0"
+soda-unchained = { path = "../programs/soda-unchained" }
 light-system-program = { version = "0.7.0", features = [
     "cpi",
     "no-entrypoint",
 ] }
+light-sdk = "0.5.0"
+anchor-client = "0.29.0"
+configparser = "3.1.0"
+eyre = "0.6.12"
