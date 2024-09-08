@@ -64,7 +64,7 @@ impl<'info> MembershipMint<'info> {
     pub fn set_mint_ctx(&self) -> CpiContext<'_, '_, '_, 'info, MintToInstruction<'info>> {
         let cpi_accounts = MintToInstruction {
             fee_payer: self.payer.to_account_info(),
-            authority: self.soda_authority.to_account_info(),
+            authority: self.payer.to_account_info(),
             cpi_authority_pda: self.cpi_authority_pda.to_account_info(),
             mint: self.mint.to_account_info(),
             token_pool_pda: self.token_pool_pda.to_account_info(),

@@ -27,15 +27,11 @@ light-compressed-token = { version = "0.7.0", features = [
 ] }
 account-compression = { version = "0.7.0", features = ["cpi", "no-entrypoint"] }
 
+light-system-program = { version = "0.7.0", features = ["cpi"] }
 
 [target.'cfg(not(target_os = "solana"))'.dependencies]
 solana-sdk = "1.18.18"
 
-[dev-dependencies]
 solana-program-test = "1.18.18"
 proptest = "1.0.0"
 tokio = "1.40.0"
-light-system-program = { version = "0.7.0", features = [
-    "cpi",
-    "no-entrypoint",
-] }

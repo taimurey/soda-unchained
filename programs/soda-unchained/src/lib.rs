@@ -2,15 +2,14 @@ pub mod error;
 pub mod instructions;
 pub mod utils;
 
-use account_compression::{AddressMerkleTreeConfig, AddressQueueConfig};
 use anchor_lang::prelude::*;
 use instructions::*;
 
 #[cfg(not(feature = "devnet"))]
-declare_id!("DJEXkPy4z1K9g8RvGUVqHy3EivJU64drXv3FvTJSJgbw");
+declare_id!("5cqC671u7TqttSQC3MBMTj41KkWC8pTebcg1kbXwP1hZ");
 
 #[cfg(feature = "devnet")]
-declare_id!("DJEXkPy4z1K9g8RvGUVqHy3EivJU64drXv3FvTJSJgbw");
+declare_id!("5cqC671u7TqttSQC3MBMTj41KkWC8pTebcg1kbXwP1hZ");
 
 pub mod admin {
     use anchor_lang::prelude::declare_id;
@@ -25,26 +24,12 @@ pub mod soda_unchained {
     use super::*;
 
     /// Initialize the server
-    pub fn initialize_server(
-        ctx: Context<ServerInitialize>,
-        merkle_tree_config: AddressMerkleTreeConfig,
-        queue_config: AddressQueueConfig,
-        bump: u8,
-        index: u64,
-        amount: u64,
-    ) -> Result<()> {
-        instructions::initialize::initialize_server(
-            ctx,
-            merkle_tree_config,
-            queue_config,
-            bump,
-            index,
-            amount,
-        )
+    pub fn initialize_server(ctx: Context<ServerInitialize>, amount: u64) -> Result<()> {
+        instructions::initialize::initialize_server(ctx, amount)
     }
 
-    /// membership token
-    pub fn membership_token(ctx: Context<MembershipMint>, param: u8) -> Result<()> {
-        instructions::manage_membership(ctx, param)
-    }
+    // /// membership token
+    // pub fn membership_token(ctx: Context<MembershipMint>, param: u8) -> Result<()> {
+    //     instructions::manage_membership(ctx, param)
+    // }
 }
