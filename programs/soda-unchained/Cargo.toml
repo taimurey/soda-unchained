@@ -21,13 +21,15 @@ test-sbf = []
 [dependencies]
 anchor-lang = "0.29.0"
 anchor-spl = "0.29.0"
-light-compressed-token = { version = "0.7.0", features = [
+light-compressed-token = { version = "1.0.0", features = [
     "cpi",
     "no-entrypoint",
 ] }
-account-compression = { version = "0.7.0", features = ["cpi", "no-entrypoint"] }
-
-light-system-program = { version = "0.7.0", features = ["cpi"] }
+light-hasher = { version = "1.0.0" }
+light-utils = { version = "1.0.0" }
+account-compression = { version = "1.0.0", features = ["cpi"] }
+light-sdk = { version = "0.8.0", features = ["cpi"] }
+light-system-program = { version = "1.0.0", features = ["cpi"] }
 
 [target.'cfg(not(target_os = "solana"))'.dependencies]
 solana-sdk = "1.18.18"

@@ -80,7 +80,7 @@ pub fn initialize_server(ctx: Context<ServerInitialize>, amount: u64) -> Result<
         None,
     )?;
 
-    //   light_compressed_token::cpi::transfer(ctx.accounts.set_transfer_ctx(), inputs)?;
+    // light_compressed_token::cpi::transfer(ctx.accounts.set_transfer_ctx(), inputs)?;
 
     // account_compression::cpi::insert_addresses(
     //     ctx.accounts.set_insert_addresses_ctx(),
